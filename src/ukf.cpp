@@ -58,13 +58,6 @@ UKF::UKF() {
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
   weights_ = VectorXd(2 * n_aug_ + 1);
   
-  // NIS
-  NIS_radar_ = 0.0;
-  NIS_laser_ = 0.0;
-  
-  // Lambda Value
-  lambda_ = 3 - n_x_;
-  
   // set weights
   double weight_0 = lambda_/(lambda_ +n_aug_);
   weights_(0) = weight_0;
@@ -73,6 +66,13 @@ UKF::UKF() {
     weights_(i) = weight;
   }
   
+  // NIS
+  NIS_radar_ = 0.0;
+  NIS_laser_ = 0.0;
+  
+  // Lambda Value
+  lambda_ = 3 - n_x_;
+
   //add measurement noise covariance matrix
   Rlidar = MatrixXd(2,2);
   Rlidar << std_laspx_ * std_laspx_, 0,
@@ -228,7 +228,10 @@ void UKF::Prediction(double delta_t) {
 
   //predicted state mean
   x_.fill(0.0);
-  x_ = Xsig_pred_ * weights_;
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
+    x_ = x_+ weights_(i) * Xsig_pred_.col(i);
+  }
+  
 
   //predicted state covariance matrix
   P_.fill(0.0);

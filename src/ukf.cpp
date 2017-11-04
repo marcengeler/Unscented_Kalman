@@ -45,7 +45,7 @@ UKF::UKF() {
   std_radrd_ = 0.3;
 
   // set to uninizialized --> will be done when the first sensor value arrives
-  is_initialized = false;
+  is_initialized_ = false;
   
   //state dimension
   n_x_ = 5;
@@ -61,7 +61,7 @@ UKF::UKF() {
   NIS_laser_ = 0.0;
   
   // Lambda Value
-  lambda = 3 - n_x_;
+  lambda_ = 3 - n_x_;
 }
 
 UKF::~UKF() {}
@@ -75,7 +75,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   bool laser = meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_;
   bool radar = meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_;
   
-  if(!is_initialized) {
+  if(!is_initialized_) {
 	  // Timestamp
 	  time_us_ = meas_package.timestamp_;
 	  
@@ -103,7 +103,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		   0   ,0   ,0,0,1;
 	
 	  // done initializing, no need to predict or update
-      is_initialized_ = true;
+      is_initialized__ = true;
 
       return;	 
   }

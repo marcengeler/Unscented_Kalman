@@ -80,7 +80,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	  time_us_ = meas_package.timestamp_;
 	  
 	  // Initialize x
-	  x << 0,0,0,0,0;
+	  x_ << 0,0,0,0,0;
 	  
 	  if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
         x_(0) = meas_package.raw_measurements_(0);
@@ -91,8 +91,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
         float rho_dot = meas_package.raw_measurements_(2);
         x_(0) = rho * cos(phi);
         x_(1) = rho * sin(phi);
-		x_(2) = rho_d * cos(phi);
-	    x_(3) = rho_d * sin(phi);
+		x_(2) = rho_dot * cos(phi);
+	    x_(3) = rho_dot * sin(phi);
       }
 	  
 	  // Covariance Matrix
@@ -103,13 +103,13 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		   0   ,0   ,0,0,1;
 	
 	  // done initializing, no need to predict or update
-      is_initialized__ = true;
+      is_initialized_ = true;
 
       return;	 
   }
   
-  float dt = measurement_pack.timestamp_ - previous_timestamp_;
-  time_us_ = measurement_pack.timestamp_;
+  float dt = meas_package.timestamp_ - previous_timestamp_;
+  time_us_ = meas_package.timestamp_;
   ///* Convert to SI units dt
   dt = dt/1000000.0;
 

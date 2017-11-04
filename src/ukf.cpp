@@ -416,7 +416,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   P_ = P_ - K*S*K.transpose();
 }
 
-double NormalizeAngle(double angle) {
+double UKF::NormalizeAngle(double angle) {
 	while (angle> M_PI) angle-=2.*M_PI;
     while (angle<-M_PI) angle+=2.*M_PI;
 	return angle;

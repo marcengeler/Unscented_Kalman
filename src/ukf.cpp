@@ -157,7 +157,7 @@ void UKF::Prediction(double delta_t) {
 
   //create augmented covariance matrix
   P_aug.fill(0.0);
-  P_aug.topLeftCorner(n_aug_-2,n_aug_-2) = P;
+  P_aug.topLeftCorner(n_aug_-2,n_aug_-2) = P_;
   P_aug(n_aug_-2,n_aug_-2) = std_a_*std_a_;
   P_aug(n_aug_-1,n_aug_-1) = std_yawdd_*std_yawdd_;
 
@@ -226,7 +226,7 @@ void UKF::Prediction(double delta_t) {
   }
 
   //predicted state mean
-  x.fill(0.0);
+  x_.fill(0.0);
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
     x = x+ weights_(i) * Xsig_pred_.col(i);
   }
@@ -255,7 +255,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   // Take simplified version from lecture  
   //create matrix for sigma points in measurement space
   int n_z = 2;
-  MatrixXd Zsig = MatrixXd(n_z, 2 * n_aug + 1);
+  MatrixXd Zsig = MatrixXd(n_z, 2 * n_aug_ + 1);
 
   //transform sigma points into measurement space
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
@@ -293,7 +293,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   S = S + R;
   
   //create matrix for cross correlation Tc
-  MatrixXd Tc = MatrixXd(n_x, n_z);
+  MatrixXd Tc = MatrixXd(n_x_, n_z);
   
   //calculate cross correlation matrix
   Tc.fill(0.0);

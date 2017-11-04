@@ -79,7 +79,7 @@ UKF::UKF() {
        0, std_laspy_ * std_laspy_;
 	   
   //add measurement noise covariance matrix
-  MatrixXd Rradar = MatrixXd(3, 3);
+  Rradar = MatrixXd(3, 3);
   Rradar << std_radr_*std_radr_,                       0,                     0,
                          0, std_radphi_*std_radphi_,                     0,
                          0,                       0, std_radrd_*std_radrd_;

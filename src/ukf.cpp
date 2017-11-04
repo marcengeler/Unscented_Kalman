@@ -104,8 +104,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
         float rho_dot = meas_package.raw_measurements_(2);
         x_(0) = rho * cos(phi);
         x_(1) = rho * sin(phi);
-		x_(2) = rho_dot * cos(phi);
-	    x_(3) = rho_dot * sin(phi);
+		x_(2) = rho_dot;
 		      }
 	  
 	  // Covariance Matrix

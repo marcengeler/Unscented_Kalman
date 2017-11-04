@@ -141,18 +141,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
  * @param {double} delta_t the change in time (in seconds) between the last
  * measurement and this one.
  */
-void UKF::Prediction(double delta_t) {
-  MatrixXd Xsig_ = MatrixXd(n_x_, 2 * n_x_ + 1);
-  MatrixXd A = P_.llt().matrixL();
-  
-  // Copy code from lecture exercise
-   Xsig_.col(0) = x_;
-  for (int i = 0; i < n_x_; i++)
-  {
-    Xsig_.col(i + 1) = x_ + sqrt(lambda_ + n_x_) * A.col(i);
-    Xsig_.col(i + 1 + n_x_) = x_ - sqrt(lambda_ + n_x_) * A.col(i);
-  }
-  
+void UKF::Prediction(double delta_t) {  
   //create augmented mean vector
   VectorXd x_aug = VectorXd(n_aug_);
 

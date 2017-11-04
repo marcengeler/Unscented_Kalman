@@ -113,7 +113,7 @@ public:
    */
   void UpdateRadar(MeasurementPackage meas_package);
   
-  double NormalizeAngle(double angle);
+  double NormalizeAngle(double& angle);
 };
 
 #endif /* UKF_H */

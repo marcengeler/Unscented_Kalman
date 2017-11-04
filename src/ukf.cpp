@@ -75,6 +75,13 @@ UKF::UKF() {
        0, std_laspy_ * std_laspy_;
 	   
 
+  // set weights
+  double weight_0 = lambda_/(lambda_ +n_aug_);
+  weights_(0) = weight_0;
+  for (int i=1; i<2*n_aug_+1; i++) {  //2n+1 weights
+    double weight = 0.5/(n_aug_+lambda_);
+    weights_(i) = weight;
+  }
 }
 
 UKF::~UKF() {}
@@ -216,14 +223,6 @@ void UKF::Prediction(double delta_t) {
     Xsig_pred_(2,i) = v_p;
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
-  }
-  
-  // set weights
-  double weight_0 = lambda_/(lambda_ +n_aug_);
-  weights_(0) = weight_0;
-  for (int i=1; i<2*n_aug_+1; i++) {  //2n+1 weights
-    double weight = 0.5/(n_aug_+lambda_);
-    weights_(i) = weight;
   }
   
   //predicted state mean

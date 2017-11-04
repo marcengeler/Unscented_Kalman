@@ -228,9 +228,7 @@ void UKF::Prediction(double delta_t) {
 
   //predicted state mean
   x_.fill(0.0);
-  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
-    x_ = x_+ weights_(i) * Xsig_pred_.col(i);
-  }
+  x_ = Xsig_pred_ * weights_;
 
   //predicted state covariance matrix
   P_.fill(0.0);
@@ -239,7 +237,7 @@ void UKF::Prediction(double delta_t) {
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
     //angle normalization
-	x_diff(3) = NormalizeAngle(x_diff(3));
+	NormalizeAngle(x_diff(3));
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
   }
@@ -346,13 +344,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 	if(fabs(p_y) < 0.0001 && fabs(p_x) < 0.0001) {
 		Zsig(1,i) = 0;
 	} else {
-		Zsig(1, i) = atan2(p_y, p_x);                           //phi
+		Zsig(1,i) = atan2(p_y, p_x);                           //phi
 	}
     
 	if (fabs(Zsig(0, i)) < 0.0001) {
-		Zsig(2, i) = 0;   //r_dot
+		Zsig(2,i) = 0;   //r_dot
 	} else {
-		Zsig(2, i) = (p_x*v1 + p_y*v2) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
+		Zsig(2,i) = (p_x*v1 + p_y*v2) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
 	}
   }
 
@@ -371,7 +369,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     VectorXd z_diff = Zsig.col(i) - z_pred;
 
     //angle normalization
-	z_diff(1) = NormalizeAngle(z_diff(1));
+	NormalizeAngle(z_diff(1));
 
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
@@ -391,12 +389,12 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     //residual
     VectorXd z_diff = Zsig.col(i) - z_pred;
     //angle normalization
-	z_diff(1) = NormalizeAngle(z_diff(1));
+	NormalizeAngle(z_diff(1));
 
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
     //angle normalization
-    z_diff(3) = NormalizeAngle(z_diff(3));
+    NormalizeAngle(z_diff(3));
 
     Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
   }
@@ -408,7 +406,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   VectorXd z_diff = z - z_pred;
 
   //angle normalization
-  z_diff(1) = NormalizeAngle(z_diff(1));
+  NormalizeAngle(z_diff(1));
 
   //calculate NIS
   NIS_radar_ = z_diff.transpose() * S.inverse() * z_diff;
@@ -418,8 +416,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   P_ = P_ - K*S*K.transpose();
 }
 
-double UKF::NormalizeAngle(double angle) {
-	while (angle> M_PI) angle-=2.*M_PI;
-    while (angle<-M_PI) angle+=2.*M_PI;
-	return angle;
+double UKF::NormalizeAngle(double& phi) {
+	phi = atan2(sin(phi), cos(phi));
 }

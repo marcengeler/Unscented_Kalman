@@ -62,6 +62,12 @@ UKF::UKF() {
   
   // Lambda Value
   lambda_ = 3 - n_x_;
+  
+  //add measurement noise covariance matrix
+  Rradar = MatrixXd(3, 3);
+  Rradar << std_radr_*std_radr_,                       0,                     0,
+                         0, std_radphi_*std_radphi_,                     0,
+                         0,                       0, std_radrd_*std_radrd_;
 }
 
 UKF::~UKF() {}
@@ -372,12 +378,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
 
-  //add measurement noise covariance matrix
-  MatrixXd R = MatrixXd(n_z, n_z);
-  R << std_radr_*std_radr_,                       0,                     0,
-                         0, std_radphi_*std_radphi_,                     0,
-                         0,                       0, std_radrd_*std_radrd_;
-						   S = S + R;
+  S = S + Rradar;
 
   //create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z);
